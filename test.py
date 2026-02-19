@@ -1,3 +1,11 @@
+#layout_detection
+from pipeline.layout_detection import layout_element
+import cv2
+img = cv2.imread("sample.png")
+res = layout_element(img)
+print(res)
+
+'''
 #image_utils.py
 from PIL import Image
 from utils.image_utils import (
@@ -29,3 +37,4 @@ save_img("output/gray.jpg", grayscale)
 save_img("output/edges.jpg", edge_detect)
 save_img("output/boxed.jpg", boxed)
 print("all done")
+'''
