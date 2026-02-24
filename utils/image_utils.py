@@ -4,12 +4,12 @@ import cv2
 import numpy as np
 from PIL import Image
 
-def pil_to_cv2(pil_img):
+def pil_to_cv2(pil_img): #rgb to bgr
     rgb_arr = np.array(pil_img)
     bgr_img = cv2.cvtColor(rgb_arr,cv2.COLOR_RGB2BGR)
     return bgr_img
 
-def resize(img, width=None):
+def resize(img, width=None): 
     if width is None or width <=0 :
         return img
     h, w = img.shape[:2]
@@ -18,7 +18,7 @@ def resize(img, width=None):
     resized = cv2.resize(img,(width,new_h))
     return resized
 
-def to_gray(img):
+def to_gray(img): 
     return cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
 def detect_edges(gray_img):
