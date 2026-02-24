@@ -5,3 +5,5 @@ numpy
 scikit-learn
 scikit-image
 pytesseract
+google-generativeai
+python-dotenv
