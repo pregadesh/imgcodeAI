@@ -7,12 +7,12 @@ from pipeline.layout_detection import detect_layout
 from pipeline.style_extract import extract_styles
 from pipeline.hierarchy_builder import build_hierarchy
 from pipeline.code_gen import generate_html_code
-from pipeline.evaluation import evaluate_quality
+#from pipeline.evaluation import evaluate_quality
 
 st.set_page_config(page_title="Image to HTML Generator", layout="wide")
 
-st.title("📸 Image to HTML Generator Pipeline")
-st.markdown("Upload a screenshot to extract layout elements, build a hierarchy, and generate responsive HTML/CSS.")
+st.title("Image to HTML Generator")
+st.markdown("Upload a screenshot.")
 
 with st.sidebar:
     st.header("Configuration")
@@ -20,12 +20,12 @@ with st.sidebar:
     if api_key_input:
         os.environ["GEMINI_API_KEY"] = api_key_input
         
-    st.markdown("---")
-    st.markdown("### Pipeline Steps:")
-    st.markdown("1. Layout Detection (OpenCV & EasyOCR)")
-    st.markdown("2. Style Extraction (Color/Font size)")
-    st.markdown("3. Hierarchy Construction (JSON Tree)")
-    st.markdown("4. Code Generation (Gemini LLM)")
+    #st.markdown("---")
+    #st.markdown("### Pipeline Steps:")
+    #st.markdown("1. Layout Detection (OpenCV & EasyOCR)")
+    #st.markdown("2. Style Extraction (Color/Font size)")
+    #st.markdown("3. Hierarchy Construction (JSON Tree)")
+    #st.markdown("4. Code Generation (Gemini LLM)")
 
 uploaded_file = st.file_uploader("Upload an image (PNG/JPG)", type=["png", "jpg", "jpeg"])
 
@@ -40,23 +40,21 @@ if uploaded_file is not None:
         st.subheader("1. Original Image Preview")
         st.image(uploaded_file, use_column_width=True)
         
-    if st.button("Run Pipeline & Generate HTML", type="primary"):
-        with st.spinner("Step 1/3: Detecting Layout & Styles..."):
+    if st.button("Generate", type="primary"):
+        with st.spinner("1. Analysis style and structure"):
             elements = detect_layout(tmp_path)
             styled_elements = extract_styles(tmp_path, elements)
             layout_tree = build_hierarchy(styled_elements)
             
-        with st.spinner("Step 2/3: Generating HTML/CSS using Gemini..."):
+        with st.spinner("2. Generating"):
             generated_html = generate_html_code(layout_tree)
             
-        with st.spinner("Step 3/3: Evaluating Results..."):
-            score = evaluate_quality(layout_tree, generated_html)
             
-        st.success("Pipeline completed successfully!")
+        st.success("Completed successfully!")
         
         st.markdown("---")
         
-        st.subheader("2. Generated Output & Preview")
+        st.subheader("2.Generated Output & Preview")
         
         tab1, tab2, tab3 = st.tabs(["HTML Preview", "Raw HTML Code", "JSON Layout Tree"])
         
@@ -75,10 +73,7 @@ if uploaded_file is not None:
             )
             
         with tab3:
-            st.markdown("### Computer Vision Extracted Layout (Input to LLM)")
+            st.markdown("layout to LLM ")
             st.json(layout_tree)
             
         st.markdown("---")
-        
-        st.subheader("💡 Evaluation Score")
-        st.metric(label="Structural Fidelity Accuracy", value=f"{score}%", help="Based on comparing extracted components vs generated HTML tags.")
