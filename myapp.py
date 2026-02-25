@@ -3,19 +3,17 @@ import os
 import tempfile
 import streamlit.components.v1 as components
 
-# Import custom pipeline modules
-from src.layout_detection import detect_layout
-from src.style_extraction import extract_styles
-from src.hierarchy_construction import build_hierarchy
-from src.code_generation import generate_html_code
-from src.evaluation import evaluate_quality
+from pipeline.layout_detection import detect_layout
+from pipeline.style_extract import extract_styles
+from pipeline.hierarchy_builder import build_hierarchy
+from pipeline.code_gen import generate_html_code
+from pipeline.evaluation import evaluate_quality
 
 st.set_page_config(page_title="Image to HTML Generator", layout="wide")
 
 st.title("📸 Image to HTML Generator Pipeline")
 st.markdown("Upload a screenshot to extract layout elements, build a hierarchy, and generate responsive HTML/CSS.")
 
-# Sidebar for config
 with st.sidebar:
     st.header("Configuration")
     api_key_input = st.text_input("Gemini API Key", type="password", help="Overrides .env GEMINI_API_KEY")
@@ -32,7 +30,6 @@ with st.sidebar:
 uploaded_file = st.file_uploader("Upload an image (PNG/JPG)", type=["png", "jpg", "jpeg"])
 
 if uploaded_file is not None:
-    # Read the uploaded file into a temporary file so OpenCV can read it via path
     with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as tmp_file:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
@@ -65,7 +62,6 @@ if uploaded_file is not None:
         
         with tab1:
             st.markdown("### Rendering Output")
-            # Render the generated HTML in Streamlit
             components.html(generated_html, height=600, scrolling=True)
             
         with tab2:
