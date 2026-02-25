@@ -1,81 +1,57 @@
 import json
 from PIL import Image
 
-from utils.image_utils import pil_to_cv2,draw_bbox,save_img
+from utils.image_utils import pil_to_cv2, draw_detections, save_img
 from pipeline.layout_detection import layout_element
 from pipeline.hierarchy_builder import tree_layout
 from pipeline.style_extract import extract_styles
-from pipeline.code_gen import html_gen,html_save
+from pipeline.code_gen import html_gen, html_save
+from pipeline.evaluation import evaluate_layout
 
-img_path = "sample.png"
-output_path = "output/debug_det.png"
+
+IMG_PATH = "sample.png"
+DEBUG_PATH = "output/debug_det.png"
 
 
 def test():
-    pil_image = Image.open(img_path)
+    pil_image = Image.open(IMG_PATH).convert("RGB")
     cv_img = pil_to_cv2(pil_image)
-    print("Loaded")
+    img_h, img_w = cv_img.shape[:2]
+    print(f"Loaded {IMG_PATH}  ({img_w}x{img_h})")
 
+    # 1. Layout detection
     detections = layout_element(cv_img)
+    print(f"\n=== Stage 1: Layout Detection ({len(detections)} elements) ===")
     for d in detections:
-        print(d)
-    boxes = [d["bbox"]for d in detections]
-    debug_img = draw_bbox(cv_img,boxes)
+        print(f"  #{d['id']:3d}  {d['type']:10s}  bbox={d['bbox']}"
+              + (f"  \"{d['content']}\"" if d.get("content") else ""))
 
-    save_img(output_path,debug_img)
-    print(f"Debug image are savedin : {output_path}")
-    #style extracted
-    styles = extract_styles(cv_img,detections)
-    print("\nStyle:")
-    print(json.dumps(styles,indent=1))
-    #laout extracted
-    layout = tree_layout(detections)
-    print(f"tree is generated")
-    print(json.dumps(layout,indent=1))
-    html = html_gen(layout,styles)
+    debug_img = draw_detections(cv_img.copy(), detections)
+    save_img(DEBUG_PATH, debug_img)
+    print(f"\nDebug image saved: {DEBUG_PATH}")
+
+    # 2. Hierarchy
+    layout = tree_layout(detections, img_shape=(img_h, img_w))
+    print(f"\n=== Stage 2: Hierarchy Tree ===")
+    print(json.dumps(layout, indent=2))
+
+    # 3. Styles
+    styles = extract_styles(cv_img, detections)
+    print(f"\n=== Stage 3: Extracted Styles ===")
+    print(json.dumps(styles, indent=2))
+
+    # 4. Code generation (rule-based, no LLM)
+    html = html_gen(layout, styles)
     html_save(html)
-    print()
-test()
+    print(f"\n=== Stage 4: HTML generated (rule-based) ===")
+    print(f"Saved to: {html_save.__module__}.GENERAL_HTML_PATH")
 
-'''
-#layout_detection
-from pipeline.layout_detection import layout_element
-import cv2
-img = cv2.imread("sample.png")
-res = layout_element(img)
-print(res)
-'''
+    # 5. Evaluation
+    eval_result = evaluate_layout(layout, styles, html)
+    print(f"\n=== Stage 5: Evaluation ===")
+    print(json.dumps(eval_result, indent=2))
+    print("\nDone ✓")
 
-'''
-#image_utils.py
-from PIL import Image
-from utils.image_utils import (
-    pil_to_cv2,
-    resize,
-    to_gray,
-    detect_edges,
-    draw_bbox,
-    save_img
-)
-pil_img = Image.open("sample.png")
-cv_img = pil_to_cv2(pil_img)
-print("PIL open ok :", cv_img.shape)
 
-resized = resize(cv_img,width=500)
-print("Resize", resized.shape)
-
-grayscale= to_gray(resized)
-print("grayscale",grayscale.shape)
-
-edge_detect = detect_edges(grayscale)
-print("edge finder : ",edge_detect.shape)
-
-boxes  =[(50,50,200,200)]
-boxed = draw_bbox(resized,boxes)
-
-save_img("output/resized.jpg", resized)
-save_img("output/gray.jpg", grayscale)
-save_img("output/edges.jpg", edge_detect)
-save_img("output/boxed.jpg", boxed)
-print("all done")
-'''
+if __name__ == "__main__":
+    test()

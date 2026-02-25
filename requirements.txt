@@ -1,9 +1,7 @@
 streamlit
-pillow
-opencv-python
+opencv-python-headless
+easyocr
 numpy
-scikit-learn
-scikit-image
-pytesseract
 google-generativeai
 python-dotenv
+Pillow
