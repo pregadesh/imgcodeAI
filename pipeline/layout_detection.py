@@ -2,27 +2,21 @@ import cv2
 import easyocr
 import numpy as np
 
-# Initialize EasyOCR reader once to save loading time
 reader = easyocr.Reader(['en'], gpu=False)
 
 def detect_layout(image_path):
-    """
-    Detects layout elements (containers, text) in an image.
-    Returns a list of dictionaries, each representing an element.
-    """
     img = cv2.imread(image_path)
     if img is None:
         return []
     
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    # 1. Detect text using EasyOCR
+    # Detect text using EasyOCR
     text_results = reader.readtext(gray)
     elements = []
     
     for (bbox, text, prob) in text_results:
-        # EasyOCR returns bbox as a list of 4 points: [tl, tr, br, bl]
-        # We convert it to (x, y, w, h)
+        # EasyOCR returns bbox as a list of 4 points tl, tr, br, bl and convert it to (x, y, w, h)
         tl = bbox[0]
         br = bbox[2]
         x, y = int(tl[0]), int(tl[1])
@@ -35,14 +29,12 @@ def detect_layout(image_path):
             "confidence": prob
         })
         
-        # Mask out text regions so contour detection doesn't pick them up as separate containers
+        # Mask out text regions so contour detection doenst pick them up as separate containers
         cv2.rectangle(gray, (x, y), (x + w, y + h), (255, 255, 255), -1)
         
-    # 2. Detect containers (images, buttons, inputs) using OpenCV contours
-    # Apply edge detection
+    # 2. Detect containers using opencv
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
     
-    # Dilate to connect broken edges
     kernel = np.ones((3,3), np.uint8)
     dilated = cv2.dilate(edges, kernel, iterations=1)
     
@@ -51,7 +43,7 @@ def detect_layout(image_path):
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
         
-        # Filter out very small or very large containers
+        # Filter with very small or very large containers
         if w > 20 and h > 20 and w < img.shape[1] * 0.95 and h < img.shape[0] * 0.95:
             elements.append({
                 "type": "container",
