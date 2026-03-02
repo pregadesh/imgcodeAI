@@ -1,8 +1,16 @@
 venv
+.venv
 __pycache__
 *.pyc
+*.pyo
+*.pyd
 .env
 .git
-outputs
+.gitignore
 *.png
 *.jpg
+*.jpeg
+*.mp4
+*.zip
+*.tar
+.cache
