@@ -31,7 +31,6 @@ Requirements:
 
     try:
         response = model.generate_content(prompt)
-        # Strip potential markdown code blocks if the model ignores our instruction
         html_code = response.text
         html_code = re.sub(r'^```html\s*', '', html_code)
         html_code = re.sub(r'\s*```$', '', html_code)
