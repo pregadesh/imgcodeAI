@@ -16,11 +16,8 @@ Convert UI screenshots into structured, clean HTML/CSS code using a modular comp
 ### ⚙ Backend / Core Processing
 - **Python** – Core language
 - **OpenCV** – Layout detection and contour extraction
-- **Pillow** – Image loading and preprocessing
 - **NumPy** – Matrix operations
-- **Scikit-learn** – KMeans for color extraction
-- **Pytesseract** – OCR-based text detection
-- **Scikit-image** – SSIM for visual similarity evaluation
+- **EasyOCR** – OCR-based text detection
 
 ### 🧠 Code Generation
 - Template-based HTML builder  
