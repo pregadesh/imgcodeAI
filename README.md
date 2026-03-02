@@ -1,3 +1,4 @@
+## 🧩 System Architecture
 <p align="center">
   <img src="architecture.jpg" width="900"/>
 </p>
@@ -85,4 +86,4 @@ Measure visual similarity between the original screenshot and generated output u
 
 ---
 
-## 🧩 System Architecture
+
