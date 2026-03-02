@@ -79,11 +79,4 @@ Convert structured layout and style information into clean HTML/CSS using:
 
 ---
 
-### 5️⃣ Evaluation
-Measure visual similarity between the original screenshot and generated output using:
-- SSIM
-- Structural comparison metrics
-
----
-
 
