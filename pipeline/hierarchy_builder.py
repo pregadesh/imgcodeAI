@@ -10,7 +10,9 @@ def is_inside(box1, box2):
 def build_hierarchy(elements):
     #Constructs a JSON layout tree from a flat list of elements.
     # sort elements by area desec (L file first)
-    elements = sorted(elements, key=lambda el: el["bbox"][2] * el["bbox"][3], reverse=True)
+    elements = sorted(elements, 
+                      key=lambda el: el["bbox"][2] * el["bbox"][3], 
+                      reverse=True)
     
     # each node adds a 'children' list
     for el in elements:

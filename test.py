@@ -1,7 +1,7 @@
 import json
 from PIL import Image
 
-from utils.image_utils import pil_to_cv2, draw_detections, save_img
+#from utils.image_utils import pil_to_cv2, draw_detections, save_img
 from pipeline.layout_detection import layout_element
 from pipeline.hierarchy_builder import tree_layout
 from pipeline.style_extract import extract_styles

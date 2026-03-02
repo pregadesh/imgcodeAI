@@ -4,16 +4,12 @@ import json
 import re
 
 def generate_html_code(layout_tree):
-    """
-    Calls the Gemini API to generate HTML/CSS from the structured layout tree.
-    """
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or api_key == "your_api_key_here":
         return "<p style='color:red;'>Error: Gemini API Key not found or invalid in environment.</p>"
         
     genai.configure(api_key=api_key)
     
-    # Ensure we use a model good with code
     model = genai.GenerativeModel('gemini-2.5-flash')
     
     tree_str = json.dumps(layout_tree, indent=2)
